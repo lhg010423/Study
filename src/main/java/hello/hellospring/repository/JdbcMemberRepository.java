@@ -14,12 +14,12 @@ import static java.sql.DriverManager.getConnection;
 
 
 
-public class jdbcMemberRepository implements MemberRepository{
+public class JdbcMemberRepository implements MemberRepository {
     // implements 뒤에 클래스명에다가 alt + enter 하면 임포트 뜸
 
     private final DataSource dataSource;
 
-    public jdbcMemberRepository(DataSource dataSource) {
+    public JdbcMemberRepository(DataSource dataSource) {
         this.dataSource = dataSource;
 
     }
@@ -83,7 +83,7 @@ public class jdbcMemberRepository implements MemberRepository{
             }
 
         } catch (Exception e) {
-        throw new IllegalStateException(e);
+            throw new IllegalStateException(e);
         } finally {
             close(conn, pstmt, rs);
         }
@@ -104,7 +104,7 @@ public class jdbcMemberRepository implements MemberRepository{
             rs = pstmt.executeQuery();
 
             List<Member> members = new ArrayList<>();
-            while(rs.next()) {
+            while (rs.next()) {
                 Member member = new Member();
                 member.setId(rs.getLong("id"));
                 member.setName(rs.getString("name"));
@@ -118,9 +118,6 @@ public class jdbcMemberRepository implements MemberRepository{
             close(conn, pstmt, rs);
         }
     }
-
-
-
 
 
     @Override
@@ -138,7 +135,7 @@ public class jdbcMemberRepository implements MemberRepository{
 
             rs = pstmt.executeQuery();
 
-            if(rs.next()) {
+            if (rs.next()) {
                 Member member = new Member();
                 member.setId(rs.getLong("id"));
                 member.setName(rs.getString("name"));
@@ -154,8 +151,6 @@ public class jdbcMemberRepository implements MemberRepository{
     }
 
 
-
-
     private Connection getConnection() {
         return DataSourceUtils.getConnection(dataSource);
     }
@@ -163,53 +158,33 @@ public class jdbcMemberRepository implements MemberRepository{
 
     private void close(Connection conn, PreparedStatement pstmt, ResultSet rs) {
 
-    try {
-        if (rs != null) {
-            rs.close();
+        try {
+            if (rs != null) {
+                rs.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-                        }
-                        catch (SQLException e) {
-            e.printStackTrace();
+
+        try {
+            if (pstmt != null) {
+                pstmt.close();
             }
-                    try {
-                    if (pstmt != null) {
-            pstmt.close();
-                }
-                        }
-                        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
+        }
+
+        try {
+            if (conn != null) {
+                close(conn);
             }
-                    try {
-                    if (conn != null) {
-    close(conn);
-                }
-                        }
-                        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
-            }
-                    }
+        }
+    }
+
     private void close(Connection conn) throws SQLException {
         DataSourceUtils.releaseConnection(conn, dataSource);
     }
 
-
-
-
-
-
-
-//    @Override
-//    public Optional<Member> findById(Long id) {
-//        return Optional.empty();
-//    }
-//
-//    @Override
-//    public Optional<Member> findByName(String name) {
-//        return Optional.empty();
-//    }
-//
-//    @Override
-//    public List<Member> findAll() {
-//        return List.of();
-//    }
 }
