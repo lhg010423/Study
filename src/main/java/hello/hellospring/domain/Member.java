@@ -1,5 +1,6 @@
 package hello.hellospring.domain;
 
+
 public class Member {
 
     private Long id; // 시퀀스처럼 시스템이 지정하는 값으로 함
